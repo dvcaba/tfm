@@ -1,0 +1,17 @@
+tweet_eval_agent/
+├── main.py                          # Punto de entrada de la API (FastAPI)
+├── agent/
+│   ├── graph.py                     # LangGraph: conexión entre nodos
+│   ├── router.py                    # Detecta la intención y enruta
+│   ├── nodes/
+│   │   ├── predictor.py             # Nodo para predicción de sentimiento
+│   │   ├── evaluator.py             # Nodo para devolver métricas
+│   │   ├── visualizer.py            # Nodo para mostrar gráficas/tablas
+│   │   └── responder.py             # Nodo para redactar respuesta en lenguaje natural (usando LLM)
+│   └── utils/
+│       ├── loader.py                # Carga modelo/tokenizador/CSV
+│       └── helpers.py              # Detecta intención, parsea texto, etc.
+├── results/
+│   ├── classification_report_finetuned.csv
+│   ├── conf_matrix_finetuned.png
+└── requirements.txt

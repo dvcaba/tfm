@@ -1,0 +1,57 @@
+# Entorno virtual
+venv/
+.env/
+.venv/
+
+# Archivos de Python compilados
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Configuración de editores
+.vscode/
+.idea/
+
+# Archivos de logs y outputs
+*.log
+*.out
+*.bak
+*.swp
+*.tmp
+
+# Archivos de Jupyter
+.ipynb_checkpoints/
+
+# Datos
+*.csv
+*.tsv
+*.xls
+*.xlsx
+*.db
+*.sqlite3
+
+# Configuración del sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos de test
+htmlcov/
+.tox/
+.nox/
+coverage.*
+.cache
+.pytest_cache/
+nosetests.xml
+test-results/
+
+# Dist y empaquetado
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Otros
+*.env
+*.secret
+.env.*
+*.pem
