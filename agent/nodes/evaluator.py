@@ -3,4 +3,6 @@ from agent.utils.loader import load_metrics
 
 def get_model_metrics():
     df = load_metrics()
-    return df.loc[["accuracy", "macro avg", "weighted avg"]].to_dict()
+    df = df.loc[["accuracy", "macro avg", "weighted avg"]]
+    # Convertir DataFrame a estructura dict completamente compatible
+    return {row: df.loc[row].to_dict() for row in df.index}
