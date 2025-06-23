@@ -1,36 +1,69 @@
 # agent/nodes/responder.py
 
-from anthropic import Anthropic, HUMAN_PROMPT, AI_PROMPT
 import os
+from anthropic import Anthropic
 
-# Inicializa el cliente de Claude usando tu API Key
-client = Anthropic(
-    api_key=os.getenv("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")  # Asegúrate de tener esta variable en tu entorno
-)
+# Inicializa cliente Claude con tu API key
+client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
 def generate_response(question: str, result: str) -> str:
     """
-    Genera una respuesta en lenguaje natural basada en la pregunta del usuario y el resultado del análisis.
-
-    Args:
-        question (str): Pregunta original del usuario.
-        result (str): Resultado devuelto por el modelo (predicción, métricas o matriz de confusión).
-
-    Returns:
-        str: Respuesta redactada por el LLM.
+    Genera la respuesta final usando Claude Sonnet.
     """
     prompt = (
-        f"{HUMAN_PROMPT} A continuación tienes una pregunta y su resultado:\n\n"
+        f"A continuación tienes una pregunta y su resultado:\n\n"
         f"Pregunta: {question}\n"
         f"Resultado: {result}\n\n"
-        "Redacta una respuesta útil, clara y humana para el usuario final."
-        f"{AI_PROMPT}"
+        "Redacta una respuesta útil, clara y humana para el usuario final en español."
     )
+    
+    try:
+        response = client.messages.create(
+            model="claude-3-5-sonnet-20241022",  # Modelo actual disponible
+            max_tokens=300,
+            messages=[
+                {"role": "user", "content": prompt}
+            ]
+        )
+        return response.content[0].text.strip()
+    except Exception as e:
+        # Re-raise la excepción para que sea manejada en responder_node
+        raise e
 
-    response = client.completions.create(
-        model="claude-3-sonnet-20240229",
-        max_tokens_to_sample=300,
-        prompt=prompt
-    )
+def responder_node(state):
+    """
+    Nodo final del grafo:
+    - Si intent es 'unknown', devolvemos un mensaje fijo.
+    - Si no, tratar de generar respuesta con Claude y capturar errores.
+    """
+    if state.get("intent") == "unknown":
+        state["response"] = "Lo siento, no entiendo esa pregunta; ¿puedes reformularla?"
+        return state
 
-    return response.completion.strip()
+    question = state["question"]
+    result   = state["result"]
+
+    try:
+        response = generate_response(question, str(result))
+    except Exception as e:
+        err = str(e)
+        if "not_found_error" in err:
+            response = (
+                "No tienes acceso al modelo Claude solicitado. "
+                "Estoy usando 'claude-3-5-sonnet-20241022'; revisa tu suscripción o el nombre del modelo."
+            )
+        elif "credit balance" in err or "insufficient_quota" in err:
+            response = (
+                "Lo siento, tu saldo en Anthropic es insuficiente para generar la respuesta. "
+                "Por favor revisa tu plan o tu clave de Anthropic."
+            )
+        elif "authentication" in err or "invalid_api_key" in err:
+            response = (
+                "Error de autenticación con Anthropic: revisa tu variable de entorno "
+                "`ANTHROPIC_API_KEY`."
+            )
+        else:
+            response = f"Error al generar la respuesta con Claude: {err}"
+    
+    state["response"] = response
+    return state

@@ -1,3 +1,5 @@
+# agent/graph.py
+
 from langgraph.graph import StateGraph, END
 from agent.nodes.predictor import predict_sentiment
 from agent.nodes.evaluator import get_model_metrics
@@ -10,7 +12,7 @@ def agent_node_router(state):
     question = state["question"]
     intent = detect_intent(question)
     state["intent"] = intent
-    return intent
+    return state
 
 # Nodo de predicción
 def prediction_node(state):
@@ -31,8 +33,12 @@ def conf_matrix_node(state):
     state["result"] = result
     return state
 
-# Nodo de respuesta con LLM (Claude)
+# Nodo de respuesta con LLM o mensaje fijo para intent unknown
 def responder_node(state):
+    if state.get("intent") == "unknown":
+        state["response"] = "Lo siento, no entiendo esa pregunta; ¿puedes reformularla?"
+        return state
+
     question = state["question"]
     result = state["result"]
     response = generate_response(question, str(result))
@@ -51,13 +57,18 @@ def build_agent_graph():
 
     graph.set_entry_point("router")
 
-    graph.add_conditional_edges("router", lambda x: x["intent"], {
-        "predict": "predict",
-        "metrics": "metrics",
-        "conf_matrix": "conf_matrix"
-    })
+    graph.add_conditional_edges(
+        "router",
+        lambda state: state.get("intent"),
+        {
+            "predict": "predict",
+            "metrics": "metrics",
+            "conf_matrix": "conf_matrix",
+            "unknown": "responder",
+        }
+    )
 
-    # Después de cada nodo funcional, va el responder
+    # Tras cada nodo funcional, va el nodo de respuesta
     for node in ["predict", "metrics", "conf_matrix"]:
         graph.add_edge(node, "responder")
 
@@ -65,9 +76,10 @@ def build_agent_graph():
 
     return graph.compile()
 
-# Interfaz externa
+# Instancia del grafo para uso externo
 agent_graph = build_agent_graph()
 
-def process_question(question: str):
+def process_question(question: str) -> str:
+    """Función pública que recibe una pregunta y devuelve la respuesta final."""
     result = agent_graph.invoke({"question": question})
-    return result["response"]
+    return result.get("response")
