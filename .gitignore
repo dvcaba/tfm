@@ -23,7 +23,6 @@ __pycache__/
 .ipynb_checkpoints/
 
 # Datos
-*.csv
 *.tsv
 *.xls
 *.xlsx
