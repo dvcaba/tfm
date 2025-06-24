@@ -21,13 +21,13 @@ datasets==2.19.1
 evaluate==0.4.2
 
 # PyTorch stack
-#torch==2.3.0+cu121
-#torchvision==0.18.0+cu121
-#torchaudio==2.3.0+cu121
+torch==2.3.0+cu121
+torchvision==0.18.0+cu121
+torchaudio==2.3.0+cu121
 
-torch>=2.0.0
-torchvision>=0.15.0
-torchaudio>=2.0.0
+#torch>=2.0.0
+#torchvision>=0.15.0
+#torchaudio>=2.0.0
 
 # Utilities & I/O
 aiohttp==3.12.13
