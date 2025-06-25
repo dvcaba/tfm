@@ -55,3 +55,22 @@ def extract_text_from_question(question: str):
     """
     match = re.search(r'"([^"]+)"|\'([^\']+)\'', question)
     return match.group(1) or match.group(2) if match else question
+
+
+def extract_text_from_question_claude(question: str) -> str:
+    """Extrae el texto de la pregunta usando un modelo de Anthropic."""
+    client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+
+    prompt = (
+        "A partir de la siguiente pregunta, devuelve solo el texto del tweet referido, si existe. "
+        "Si no se identifica ningún tweet, devuelve la pregunta tal cual.\n\n"
+        f"Pregunta: {question}"
+    )
+
+    response = client.messages.create(
+        model="claude-3-5-sonnet-20241022",
+        max_tokens=100,
+        messages=[{"role": "user", "content": prompt}],
+    )
+
+    return response.content[0].text.strip()
