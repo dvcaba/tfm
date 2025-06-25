@@ -22,4 +22,10 @@ python main.py
 ```
 
 Then POST questions to `http://localhost:8000/ask` with a JSON payload `{"question": "<your question>"}`.
-If the question is `"salir"` or `"no"` the service will return a farewell and no further processing will occur.
+
+Send `"salir"` or `"no"` to end the interaction at any time. Any other
+response from the API will conclude with the phrase
+`"¿Tienes otra pregunta?"` so that you can continue the conversation.
+
+Clients may implement their own inactivity timer of around twenty seconds to
+close the session if the user stops sending questions.
