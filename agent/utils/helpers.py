@@ -1,5 +1,12 @@
+import os
 import re
+from enum import Enum
+from anthropic import Anthropic
+from langchain.output_parsers import EnumOutputParser
+
 # utils/helpers.py
+
+
 def detect_intent(question: str):
     q = question.lower()
     if "sentimiento" in q or "sentiment" in q or "tweet" in q:
@@ -10,6 +17,35 @@ def detect_intent(question: str):
         return "conf_matrix"
     else:
         return "unknown"
+
+
+class IntentEnum(str, Enum):
+    predict = "predict"
+    metrics = "metrics"
+    conf_matrix = "conf_matrix"
+    unknown = "unknown"
+
+
+def detect_intent_claude(question: str) -> str:
+    """Detect intent using Claude and return one of the allowed intents."""
+    client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+
+    prompt = (
+        "Clasifica la intención de la siguiente pregunta. "
+        "Las opciones posibles son solo: predict, metrics, conf_matrix, unknown. "
+        "Responde únicamente con una de esas palabras en minúsculas.\n\n"
+        f"Pregunta: {question}"
+    )
+
+    response = client.messages.create(
+        model="claude-3-5-sonnet-20241022",
+        max_tokens=1,
+        messages=[{"role": "user", "content": prompt}],
+    )
+
+    parser = EnumOutputParser(enum=IntentEnum)
+    text = response.content[0].text.strip()
+    return parser.parse(text)
 
 
 def extract_text_from_question(question: str):

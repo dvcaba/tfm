@@ -5,12 +5,12 @@ from agent.nodes.predictor import predict_sentiment
 from agent.nodes.evaluator import get_model_metrics
 from agent.nodes.visualizer import get_confusion_matrix
 from agent.nodes.responder import generate_response
-from agent.utils.helpers import detect_intent, extract_text_from_question
+from agent.utils.helpers import detect_intent_claude, extract_text_from_question
 
 # Nodo que decide la intención
 def agent_node_router(state):
     question = state["question"]
-    intent = detect_intent(question)
+    intent = detect_intent_claude(question)
     state["intent"] = intent
     return state
 
