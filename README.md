@@ -22,3 +22,4 @@ python main.py
 ```
 
 Then POST questions to `http://localhost:8000/ask` with a JSON payload `{"question": "<your question>"}`.
+If the question is `"salir"` or `"no"` the service will return a farewell and no further processing will occur.

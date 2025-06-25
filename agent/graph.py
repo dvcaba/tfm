@@ -81,5 +81,9 @@ agent_graph = build_agent_graph()
 
 def process_question(question: str) -> str:
     """Función pública que recibe una pregunta y devuelve la respuesta final."""
+    normalized = question.strip().lower()
+    if normalized in {"salir", "no"}:
+        return "Conversación finalizada. ¡Hasta luego!"
+
     result = agent_graph.invoke({"question": question})
     return result.get("response")
