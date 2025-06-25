@@ -1,8 +1,7 @@
 tweet_eval_agent/
 ├── main.py                          # Punto de entrada de la API (FastAPI)
 ├── agent/
-│   ├── graph.py                     # LangGraph: conexión entre nodos
-│   ├── router.py                    # Detecta la intención y enruta
+│   ├── graph.py                     # Grafo LangGraph que enruta segun intencion
 │   ├── nodes/
 │   │   ├── predictor.py             # Nodo para predicción de sentimiento
 │   │   ├── evaluator.py             # Nodo para devolver métricas
