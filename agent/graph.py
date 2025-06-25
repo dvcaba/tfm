@@ -36,13 +36,16 @@ def conf_matrix_node(state):
 # Nodo de respuesta con LLM o mensaje fijo para intent unknown
 def responder_node(state):
     if state.get("intent") == "unknown":
-        state["response"] = "Lo siento, no entiendo esa pregunta; ¿puedes reformularla?"
+        state["response"] = (
+            "Lo siento, no entiendo esa pregunta; ¿puedes reformularla?"
+            "\n\n¿Tienes otra pregunta?"
+        )
         return state
 
     question = state["question"]
     result = state["result"]
     response = generate_response(question, str(result))
-    state["response"] = response
+    state["response"] = response + "\n\n¿Tienes otra pregunta?"
     return state
 
 # Construcción del grafo

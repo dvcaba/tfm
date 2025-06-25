@@ -37,7 +37,10 @@ def responder_node(state):
     - Si no, tratar de generar respuesta con Claude y capturar errores.
     """
     if state.get("intent") == "unknown":
-        state["response"] = "Lo siento, no entiendo esa pregunta; ¿puedes reformularla?"
+        state["response"] = (
+            "Lo siento, no entiendo esa pregunta; ¿puedes reformularla?"
+            "\n\n¿Tienes otra pregunta?"
+        )
         return state
 
     question = state["question"]
@@ -65,5 +68,5 @@ def responder_node(state):
         else:
             response = f"Error al generar la respuesta con Claude: {err}"
     
-    state["response"] = response
+    state["response"] = response + "\n\n¿Tienes otra pregunta?"
     return state
