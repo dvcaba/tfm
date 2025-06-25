@@ -6,7 +6,8 @@ questions = [
     "¿Qué sentimiento tiene el siguiente texto? 'Me encanta este producto, es increíble.'",
     "¿Cuáles son las métricas del modelo finetuned?",
     "Muéstrame la matriz de confusión del modelo fine-tuned.",
-    "Hola, ¿cómo estás?"  # Desconocido
+    "Hola, ¿cómo estás?",  # Desconocido
+    "salir"
 ]
 
 for q in questions:

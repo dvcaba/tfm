@@ -16,3 +16,4 @@ if __name__ == "__main__":
     test_query("¿Cuáles son las métricas del modelo finetuned?")
     test_query("Muéstrame la matriz de confusión del modelo fine-tuned.")
     test_query("Hola, ¿cómo estás?")
+    test_query("salir")  # Debería finalizar la conversación
