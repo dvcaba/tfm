@@ -1,11 +1,11 @@
 # interactive_chat.py
 
 import asyncio
-import requests
 import os
 from agent.graph import ConversationalSession, conversational_process_question
+from agent.utils.loader import get_conf_matrix_path
 
-IMAGE_URL = "http://127.0.0.1:8000/confusion-matrix"
+CONF_MATRIX_PATH = get_conf_matrix_path()
 
 
 def show_image_with_matplotlib(image_path):
@@ -33,27 +33,17 @@ def show_image_with_matplotlib(image_path):
 
 def handle_confusion_matrix_request(prompt: str):
     """
-    Si la pregunta es sobre matriz de confusión, descarga y muestra la imagen.
+    Si la pregunta es sobre matriz de confusión, muestra la imagen localmente.
     """
     if "confusión" in prompt.lower() or "confusion" in prompt.lower():
-        print("\nDescargando y mostrando matriz de confusión...")
+        print("\nMostrando matriz de confusión...")
         try:
-            img_response = requests.get(IMAGE_URL)
-            if img_response.status_code == 200:
-                temp_path = "temp_confusion_matrix.png"
-                with open(temp_path, "wb") as f:
-                    f.write(img_response.content)
-
-                show_image_with_matplotlib(temp_path)
-
-                try:
-                    os.remove(temp_path)
-                except:
-                    pass
+            if os.path.exists(CONF_MATRIX_PATH):
+                show_image_with_matplotlib(CONF_MATRIX_PATH)
             else:
-                print(f"Error al descargar imagen: código {img_response.status_code}")
+                print(f"No se encontró la imagen en {CONF_MATRIX_PATH}")
         except Exception as e:
-            print(f"Error con la imagen: {e}")
+            print(f"Error al mostrar la imagen: {e}")
 
 
 async def get_input_with_timeout(prompt, timeout=20):
